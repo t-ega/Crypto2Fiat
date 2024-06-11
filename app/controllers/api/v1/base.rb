@@ -13,7 +13,8 @@ module API
       private
 
       def current_user
-        @current_user ||= ""
+        @current_user ||=
+          AuthenticationToken.find_user_from_token(authorization_token)
       end
 
       def authorization_token
