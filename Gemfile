@@ -62,3 +62,4 @@ end
 
 gem "grape"
 gem "factory_bot_rails"
+gem "rubocop", "~> 1.64", require: false
