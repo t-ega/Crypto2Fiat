@@ -11,7 +11,7 @@ module Users
       return :error, "Unable to verify user" if !user.update(verified: true)
 
       # revoke the token
-      AuthenticationToken.revoke_token(token)
+      AuthenticationToken.revoke_token(@token)
       [:ok]
     end
   end

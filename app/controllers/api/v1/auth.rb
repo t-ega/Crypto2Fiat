@@ -4,8 +4,8 @@ module API
       desc "Login a user based on email and password"
 
       params do
-        require :email, type: String, desc: "User email"
-        require :password, type: String, desc: "User password"
+        requires :email, type: String, desc: "User email"
+        requires :password, type: String, desc: "User password"
       end
 
       post :login do
@@ -23,8 +23,8 @@ module API
       desc "Create a user"
 
       params do
-        require :email, type: String, desc: "User email"
-        require :password, type: String, desc: "User password"
+        requires :email, type: String, desc: "User email"
+        requires :password, type: String, desc: "User password"
       end
 
       post :signup do
@@ -46,10 +46,10 @@ module API
       desc "Verify a user email is correct"
 
       params do
-        require :token,
-                type: String,
-                desc:
-                  "The unique token that was sent to the user in the verify email"
+        requires :token,
+                 type: String,
+                 desc:
+                   "The unique token that was sent to the user in the verify email"
       end
 
       post :verify do

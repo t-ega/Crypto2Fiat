@@ -1,0 +1,11 @@
+- currency: ethngn
+  short_name: ETH
+  icon: ""
+
+- currency: btcngn
+  short_name: BTC
+  icon: ""
+
+- currency: usdtngn
+  short_name: USDT
+  icon: ""
