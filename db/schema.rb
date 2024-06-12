@@ -15,6 +15,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_050430) do
     t.string "token"
     t.integer "user_id"
     t.datetime "expires_at"
+    t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_authentication_tokens_on_user_id"
