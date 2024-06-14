@@ -1,6 +1,6 @@
 module ResponseHelpers
-  def render_success(data:)
-    { success: true, message: "successful", data: data }
+  def render_success(data:, message: "successful")
+    { success: true, message: message, data: data }
   end
 
   def render_error(errors: [], message: nil, code:)

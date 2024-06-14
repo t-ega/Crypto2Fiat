@@ -6,7 +6,7 @@ module Quidax
       quidax_api_key = Rails.application.credentials.quidax_api_key
       headers = {
         "Content-Type" => "application/json",
-        "Autorization" => "Bearer #{quidax_api_key}"
+        "Authorization" => "Bearer #{quidax_api_key}"
       }
       base_url = "https://www.quidax.com/api/v1"
 
@@ -19,7 +19,11 @@ module Quidax
 
     def get_request(url)
       response = http_client.get(url)
-      puts "Response: #{response.body}"
+      response.body.with_indifferent_access
+    end
+
+    def post_request(url, data: {})
+      response = http_client.post(url, data)
       response.body.with_indifferent_access
     end
   end

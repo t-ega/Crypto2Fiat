@@ -13,6 +13,21 @@ module API
               render_success(data: result)
             end
         end
+
+        desc "Fetch wallet address to initiate a payout"
+
+        params do
+          requires :currency, values: %w[eth btc usdt]
+          optional :network
+        end
+
+        get :wallet_address do
+          currency = params[:currency]
+          _, result = Wallets::Fetcher.new(currency).call
+
+          return render_success(data: result) if result.is_a?(WalletAddress)
+          render_success(message: result, data: [])
+        end
       end
     end
   end

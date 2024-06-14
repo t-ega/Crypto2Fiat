@@ -10,6 +10,5 @@ class AuthenticationToken < ActiveRecord::Migration[7.1]
     end
 
     add_column :users, :verified, :boolean
-    add_column :users, :verified, :boolean
   end
 end

@@ -10,10 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_11_050430) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_13_080511) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "authentication_tokens", force: :cascade do |t|
     t.string "token"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "expires_at"
     t.string "reason"
     t.datetime "created_at", null: false
@@ -21,9 +24,37 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_050430) do
     t.index ["user_id"], name: "index_authentication_tokens_on_user_id"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.string "from_currency"
+    t.string "to_currency"
+    t.decimal "from_amount", precision: 10, scale: 3
+    t.decimal "to_amount", precision: 10, scale: 3
+    t.string "status"
+    t.string "receipient_email"
+    t.string "sender_email"
+    t.string "payment_address"
+    t.string "public_id"
+    t.string "network"
+    t.jsonb "account_details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "verified"
+  end
+
+  create_table "wallet_addresses", force: :cascade do |t|
+    t.string "network"
+    t.string "address"
+    t.string "address_id"
+    t.string "currency"
+    t.datetime "last_used_at"
+    t.boolean "in_use", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
