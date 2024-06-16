@@ -10,13 +10,12 @@ module Transactions
       @transaction = Transaction.find_by(public_id: transaction_id)
       return :error, "Transaction not found" if transaction.blank?
 
-      # Abiodun, whats this similarity?
-      possible_states = Transaction.aasm.events.map(&:name)
+      current_state = transaction.aasm.current_state
 
-      case possible_states
-      when :confirm_deposit
+      case current_state
+      when Transaction::STATE_INITIATED
         fetch_deposit_status
-      when :confirm_payout
+      when Transaction::STATE_DEPOSIT_CONFIRMED
         fetch_deposit_status
       end
 

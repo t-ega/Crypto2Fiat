@@ -12,17 +12,33 @@ module API
         desc "Fetch the current price of a currency"
 
         params do
+          optional :quote_type,
+                   type: String,
+                   default: "send",
+                   values: %w[receive send],
+                   desc:
+                     "The type of quotation you are making. If the vol is what you wish to receive in the 
+                     quote currency then set quote_type to receive.
+                      Otherwise it is set as the vol you wish to send."
           requires :currency,
                    type: String,
                    values: %w[ethngn btcngn usdtngn],
                    desc:
                      "The currency pair that you need the price. Must be one of 'ethngn, btcngn, usdtngn'"
+          requires :vol, type: BigDecimal
         end
 
-        get :price do
+        get :quotation do
           currency = params[:currency]
+          vol = params[:vol]
+          quote_type = params[:quote_type]
 
-          status, result = Market::Ticker.new(currency).call
+          status, result =
+            Market::PriceCalculator.new(
+              currency_pair: currency,
+              vol: vol,
+              quote_type: quote_type
+            ).call
 
           render_error(errors: result, code: 400) if status != :ok
 

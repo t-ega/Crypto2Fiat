@@ -15,12 +15,12 @@ module Wallets
     end
 
     def call
-      # wallet_address = find_valid_address || fetch_and_update_address
-      # return :ok, wallet_address if wallet_address
+      wallet_address = find_valid_address || fetch_and_update_address
+      return :ok, wallet_address if wallet_address
 
       # # Generate a new one
-      # CreateWalletAddressJob.perform_later(currency)
-      [:ok, "Generating wallet address"]
+      CreateWalletAddressJob.perform_later(currency)
+      [:pending, "Generating wallet address"]
     end
 
     private
@@ -34,17 +34,17 @@ module Wallets
     end
 
     def fetch_and_update_address
-      without_address = wallet_addresses.where(address: nil).take
-      return if without_address.blank?
+      wallet_without_address = wallet_addresses.where(address: nil).take
+      return if wallet_without_address.blank?
 
       fetched_address =
         Quidax::Wallets.new.fetch_wallet_address_by_id(
-          without_address.address_id
+          wallet_without_address.address_id
         )
 
       if fetched_address[:address]
-        without_address.update(address: fetched_address[:address])
-        without_address.reload
+        wallet_without_address.update(address: fetched_address[:address])
+        wallet_without_address.reload
       end
     end
   end

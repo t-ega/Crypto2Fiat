@@ -34,6 +34,16 @@ module API
         )
       end
 
+      rescue_from Grape::Exceptions::InvalidMessageBody do |e|
+        render_error(
+          message: "Invalid message body",
+          errors: [
+            "You must pass valid application/json in the request's 'body"
+          ],
+          code: 400
+        )
+      end
+
       rescue_from :all do |e|
         # TODO: Write errors to a log file or an error monitoring tool like sentry
         Rails.logger.error(e)

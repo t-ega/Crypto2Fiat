@@ -25,5 +25,13 @@ class Transaction < ApplicationRecord
     end
   end
 
+  validates :payment_address, presence: true
+  validates :account_details, presence: true
+  validates :from_amount, presence: true
+  validates :to_currency, presence: true
+  validates :receipient_email, presence: true
+  validates :public_id, presence: true
+  validates :network, presence: true
+
   # Nice to have: Send Mail to the receipient after the payout is successful
 end
