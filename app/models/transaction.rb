@@ -6,10 +6,11 @@ class Transaction < ApplicationRecord
 
   aasm column: "status" do
     state :initiated, initial: true
-    state :deposit_initiated, before_enter: :mark_deposit_as_confirmed
+    state :deposit_initiated, :payout_initiated
+
+    state :deposit_confirmed, before_enter: :mark_deposit_as_confirmed
     state :payout_completed, before_enter: :mark_payout_as_completed
     state :failed, before_enter: :mark_payout_as_failed
-    state :deposit_confirmed, :payout_initiated
 
     event :initiate_deposit do
       transitions from: :initiated, to: :deposit_initiated
@@ -46,7 +47,6 @@ class Transaction < ApplicationRecord
   end
 
   def mark_deposit_as_confirmed
-    puts "Marked"
     self.deposit_confirmed_at = Time.current
   end
 

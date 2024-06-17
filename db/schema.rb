@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_17_013151) do
     t.datetime "payout_confirmed_at"
     t.string "payout_reference"
     t.datetime "failed_at"
+    t.jsonb "metadata"
   end
 
   create_table "users", force: :cascade do |t|

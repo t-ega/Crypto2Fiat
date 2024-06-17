@@ -2,7 +2,7 @@ module Market
   class PriceCalculator
     VOLUME_TO_SEND = "send"
     VOLUME_TO_RECIEVE = "receive"
-    PRICE_MARKUP = 0.005.freeze
+    PRICE_MARKUP = 0.009.freeze
     MINIMUM_FIAT_AMOUNT = 500.freeze
 
     attr_reader :currency_pair, :vol, :quote_type
@@ -37,7 +37,7 @@ module Market
         markup_price,
         extra: {
           currency_pair: currency_pair,
-          base_amount: result,
+          market_price: result,
           amount_to_recieve: markup_price,
           service_charge: PRICE_MARKUP
         }

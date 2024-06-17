@@ -29,8 +29,6 @@ module Kora
           }
         }
 
-        puts "Payload: #{payload}\n\n"
-
         res = self.post_request(Endpoints::DISBURE, payload)
         return :ok, res[:data] if res[:data]
         [:error, res[:error]]

@@ -15,7 +15,7 @@ module Transactions
       case current_state
       when Transaction::STATE_DEPOSIT_INITIATED
         fetch_deposit_status
-      when Transaction::STATE_DEPOSIT_CONFIRMED
+      when Transaction::STATE_PAYOUT_INITIATED
         fetch_payout_status
       end
 
@@ -28,28 +28,29 @@ module Transactions
       return :error, result if status != :ok
 
       result.each do |deposit|
-        payment_address = deposit["payment_address"]["address"]
-        # next if payment_address != transaction.payment_address
+        # Only check for actual deposits in production
+        if Rails.env.production?
+          payment_address = deposit["payment_address"]["address"]
+          next if payment_address != transaction.payment_address
 
-        deposit_created_at = DateTime.parse(deposit["created_at"])
-        transaction_created_at = transaction.created_at
+          deposit_created_at = DateTime.parse(deposit["created_at"])
+          transaction_created_at = transaction.created_at
 
-        valid_transaction_range =
-          transaction_created_at + Transaction::CONFIRMABLE_PERIOD
+          valid_transaction_range =
+            transaction_created_at + Transaction::CONFIRMABLE_PERIOD
 
-        in_valid_deposit_range =
-          deposit_created_at.between?(
-            transaction_created_at,
-            valid_transaction_range
-          )
+          in_valid_deposit_range =
+            deposit_created_at.between?(
+              transaction_created_at,
+              valid_transaction_range
+            )
 
-        # return if !in_valid_deposit_range
+          return if !in_valid_deposit_range
+        end
 
         # Since this desposit is within the transaction
         # timeline (e.g 20mins), it would be safe to **assume** that this deposit belongs to that transaction
-        puts "Transaction from #{transaction.from_amount} #{deposit["amount"]} true?#{transaction.from_amount == deposit["amount"]}"
         if transaction.from_amount == deposit["amount"].to_f
-          puts "Tes"
           transaction.confirm_deposit!
           enqueue_payout
           transaction.reload
@@ -76,10 +77,14 @@ module Transactions
         return
       end
 
-      if result["status"] == "success"
+      case result["status"]
+      when "success"
         transaction.confirm_payout!
-        transaction.reload
+      when "failed"
+        transaction.fail_transaction!
       end
+
+      transaction.reload
     end
 
     def enqueue_payout

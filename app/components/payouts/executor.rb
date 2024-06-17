@@ -19,7 +19,7 @@ module Payouts
       end
 
       # Calculate the to_amount for the transaction
-      status, result =
+      status, result, extra =
         Market::PriceCalculator.new(
           currency_pair: transaction.extract_currency_pair,
           vol: transaction.from_amount,
@@ -31,6 +31,7 @@ module Payouts
       transaction.with_lock do
         transaction.update!(
           to_amount: result,
+          metadata: extra,
           payout_reference: generate_reference
         )
         transaction.initiate_payout!

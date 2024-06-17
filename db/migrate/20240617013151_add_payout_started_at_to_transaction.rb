@@ -4,5 +4,6 @@ class AddPayoutStartedAtToTransaction < ActiveRecord::Migration[7.1]
     add_column :transactions, :payout_confirmed_at, :datetime
     add_column :transactions, :payout_reference, :string
     add_column :transactions, :failed_at, :datetime
+    add_column :transactions, :metadata, :jsonb
   end
 end
