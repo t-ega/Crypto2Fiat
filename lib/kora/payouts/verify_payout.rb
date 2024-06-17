@@ -1,15 +1,12 @@
 module Kora
   module Payouts
     class VerifyPayout < BaseClient
-      attr_reader :reference
-
-      def initialize(reference)
-        @reference = reference
+      def initialize
         super
       end
 
-      def call
-        url = "#{Endpoints}/#{reference}"
+      def call(reference)
+        url = "#{Endpoints::TRANSACTION}/#{reference}"
         res = self.get_request(url)
 
         return :ok, res[:data] if res[:data]

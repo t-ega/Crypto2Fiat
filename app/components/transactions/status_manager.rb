@@ -11,6 +11,7 @@ module Transactions
       return :error, "Transaction not found" if transaction.blank?
 
       current_state = transaction.aasm.current_state
+      puts "Called"
 
       case current_state
       when Transaction::STATE_DEPOSIT_INITIATED
@@ -49,7 +50,7 @@ module Transactions
         # timeline (e.g 20mins), it would be safe to **assume** that this deposit belongs to that transaction
         if transaction.from_amount == deposit["amount"]
           transaction.confirm_deposit!
-          enque_payout
+          enqueue_payout
           transaction.reload
           return
         end
@@ -57,9 +58,31 @@ module Transactions
     end
 
     def fetch_payout_status
+      if transaction.payout_reference.blank?
+        Rails.logger.error(
+          "Unable to verfiy payout status #{transaction.public_id}. Empty payout reference"
+        )
+        return
+      end
+
+      status, result =
+        Kora::Payouts::VerifyPayout.new.call(transaction.payout_reference)
+
+      if status != :ok
+        Rails.logger.error(
+          "Unable to verify payout status for #{transaction.public_id}. Failed with #{result}"
+        )
+        return
+      end
+
+      if result["status"] == "success"
+        transaction.confirm_payout!
+        transaction.reload
+      end
     end
 
     def enqueue_payout
+      ExecutePayoutJob.perform_later(transaction.public_id)
     end
   end
 end
