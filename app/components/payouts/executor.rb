@@ -27,11 +27,40 @@ module Payouts
         )
 
       return :error, result if status != :ok
-      transaction.update!(to_amount: result)
-      transaction.reload
-      #   Initiate the payout
+
+      transaction.with_lock do
+        transaction.update!(
+          to_amount: result,
+          payout_reference: generate_reference
+        )
+        transaction.initiate_payout!
+
+        transaction.reload
+      end
+
+      status, result =
+        # Initiate the payout
+        # We are in test mode, so we have to use the test accounts to simulate a success payout
+        Kora::Payouts.new(
+          bank_code: "033",
+          bank_account: "0000000000",
+          amount: transaction.to_amount,
+          reference: transaction.payout_reference,
+          receipient_email: transaction.receipient_email
+        ).call
+
+      if status != :ok
+        transaction.fail_transaction!
+        return :error, result
+      end
+
+      [:ok, result]
     rescue ActiveRecord::RecordInvalid => invalid
       [:error, invalid.record.errors.full_messages]
+    end
+
+    def generate_reference
+      SecureRandom.uuid
     end
   end
 end

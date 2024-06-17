@@ -40,6 +40,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_17_013151) do
     t.datetime "updated_at", null: false
     t.datetime "deposit_confirmed_at"
     t.datetime "payout_confirmed_at"
+    t.string "payout_reference"
     t.datetime "failed_at"
   end
 

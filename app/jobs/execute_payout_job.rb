@@ -15,7 +15,7 @@ class ExecutePayoutJob < ApplicationJob
     end
 
     Rails.logger.info(
-      "Successfully execute payout for transaction with id: #{transaction_id}."
+      "Successfully executed payout for transaction with id: #{transaction_id}. Results: #{result}"
     )
   end
 end

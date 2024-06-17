@@ -16,7 +16,7 @@ class Transaction < ApplicationRecord
       transitions from: :initiated, to: :deposit_initiated
     end
 
-    event :confirm_deposit do
+    event :confirm_deposit, before_enter: :mark_deposit_as_confirmed do
       transitions from: :deposit_initiated, to: :deposit_confirmed
     end
 
@@ -24,11 +24,11 @@ class Transaction < ApplicationRecord
       transitions from: :deposit_confirmed, to: :payout_initiated
     end
 
-    event :confirm_payout do
+    event :confirm_payout, before_enter: :mark_payout_as_completed do
       transitions from: :payout_initiated, to: :payout_completed
     end
 
-    event :failed do
+    event :fail_transaction do
       transitions from: %i[initiated deposit_initiated payout_initiated],
                   to: :failed
     end
@@ -44,6 +44,14 @@ class Transaction < ApplicationRecord
 
   def extract_currency_pair
     "#{self.from_currency.downcase}#{self.to_currency.downcase}"
+  end
+
+  def mark_deposit_as_confirmed
+    self.deposit_confirmed_at = Time.current
+  end
+
+  def mark_payout_as_completed
+    self.payout_confirmed_at = Time.current
   end
 
   # Nice to have: Send Mail to the receipient after the payout is successful
