@@ -26,8 +26,7 @@ module Kora
     end
 
     def post_request(url, data)
-      response = http_client.post(url)
-      puts "Response: #{response.body}"
+      response = http_client.post(url, data.to_json)
       response.body.with_indifferent_access
     end
   end

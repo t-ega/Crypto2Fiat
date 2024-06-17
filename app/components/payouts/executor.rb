@@ -10,11 +10,11 @@ module Payouts
       transaction = Transaction.find_by(public_id: transaction_id)
       return :error, "Transaction not found" if transaction.blank?
 
-      if transaction.deposit_confrimed_at.blank?
+      if transaction.deposit_confirmed_at.blank?
         return :error, "Transaction has not been confirmed"
       end
 
-      if transaction.payout_confrimed_at.present?
+      if transaction.payout_confirmed_at.present?
         return :error, "Payout already executed"
       end
 
@@ -23,8 +23,8 @@ module Payouts
         Market::PriceCalculator.new(
           currency_pair: transaction.extract_currency_pair,
           vol: transaction.from_amount,
-          quote_type: VOLUME_TO_SEND
-        )
+          quote_type: Market::PriceCalculator::VOLUME_TO_SEND
+        ).call
 
       return :error, result if status != :ok
 
@@ -41,13 +41,13 @@ module Payouts
       status, result =
         # Initiate the payout
         # We are in test mode, so we have to use the test accounts to simulate a success payout
-        Kora::Payouts.new(
+        Kora::Payouts::SinglePayout.new.call(
           bank_code: "033",
           bank_account: "0000000000",
           amount: transaction.to_amount,
           reference: transaction.payout_reference,
           receipient_email: transaction.receipient_email
-        ).call
+        )
 
       if status != :ok
         transaction.fail_transaction!

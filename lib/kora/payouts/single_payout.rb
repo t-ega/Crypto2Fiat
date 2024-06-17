@@ -1,28 +1,17 @@
 module Kora
   module Payouts
     class SinglePayout < BaseClient
-      attr_reader :bank_code,
-                  :bank_account,
-                  :reference,
-                  :receipient_email,
-                  :amount
+      def initialize
+        super
+      end
 
-      def initialize(
+      def call(
         bank_code:,
         bank_account:,
         amount:,
         reference:,
         receipient_email:
       )
-        @bank_code = bank_code
-        @bank_account = bank_account
-        @amount = amount
-        @reference = reference
-        @receipient_email = receipient_email
-        super
-      end
-
-      def call
         payload = {
           reference: reference,
           destination: {
@@ -39,6 +28,8 @@ module Kora
             }
           }
         }
+
+        puts "Payload: #{payload}\n\n"
 
         res = self.post_request(Endpoints::DISBURE, payload)
         return :ok, res[:data] if res[:data]

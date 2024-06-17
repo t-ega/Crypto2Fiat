@@ -6,17 +6,16 @@ class Transaction < ApplicationRecord
 
   aasm column: "status" do
     state :initiated, initial: true
-    state :deposit_initiated,
-          :deposit_confirmed,
-          :payout_initiated,
-          :payout_completed,
-          :failed
+    state :deposit_initiated, before_enter: :mark_deposit_as_confirmed
+    state :payout_completed, before_enter: :mark_payout_as_completed
+    state :failed, before_enter: :mark_payout_as_failed
+    state :deposit_confirmed, :payout_initiated
 
     event :initiate_deposit do
       transitions from: :initiated, to: :deposit_initiated
     end
 
-    event :confirm_deposit, before_enter: :mark_deposit_as_confirmed do
+    event :confirm_deposit do
       transitions from: :deposit_initiated, to: :deposit_confirmed
     end
 
@@ -24,7 +23,7 @@ class Transaction < ApplicationRecord
       transitions from: :deposit_confirmed, to: :payout_initiated
     end
 
-    event :confirm_payout, before_enter: :mark_payout_as_completed do
+    event :confirm_payout do
       transitions from: :payout_initiated, to: :payout_completed
     end
 
@@ -47,11 +46,16 @@ class Transaction < ApplicationRecord
   end
 
   def mark_deposit_as_confirmed
+    puts "Marked"
     self.deposit_confirmed_at = Time.current
   end
 
   def mark_payout_as_completed
     self.payout_confirmed_at = Time.current
+  end
+
+  def mark_payout_as_failed
+    self.failed_at = Time.current
   end
 
   # Nice to have: Send Mail to the receipient after the payout is successful

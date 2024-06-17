@@ -11,7 +11,6 @@ module Transactions
       return :error, "Transaction not found" if transaction.blank?
 
       current_state = transaction.aasm.current_state
-      puts "Called"
 
       case current_state
       when Transaction::STATE_DEPOSIT_INITIATED
@@ -30,7 +29,7 @@ module Transactions
 
       result.each do |deposit|
         payment_address = deposit["payment_address"]["address"]
-        next if payment_address != transaction.payment_address
+        # next if payment_address != transaction.payment_address
 
         deposit_created_at = DateTime.parse(deposit["created_at"])
         transaction_created_at = transaction.created_at
@@ -44,11 +43,13 @@ module Transactions
             valid_transaction_range
           )
 
-        return if !in_valid_deposit_range
+        # return if !in_valid_deposit_range
 
         # Since this desposit is within the transaction
         # timeline (e.g 20mins), it would be safe to **assume** that this deposit belongs to that transaction
-        if transaction.from_amount == deposit["amount"]
+        puts "Transaction from #{transaction.from_amount} #{deposit["amount"]} true?#{transaction.from_amount == deposit["amount"]}"
+        if transaction.from_amount == deposit["amount"].to_f
+          puts "Tes"
           transaction.confirm_deposit!
           enqueue_payout
           transaction.reload
