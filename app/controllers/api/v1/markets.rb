@@ -33,7 +33,7 @@ module API
           vol = params[:vol]
           quote_type = params[:quote_type]
 
-          status, result =
+          status, result, extra =
             Market::PriceCalculator.new(
               currency_pair: currency,
               vol: vol,
@@ -42,7 +42,7 @@ module API
 
           render_error(errors: result, code: 400) if status != :ok
 
-          render_success(data: result)
+          render_success(data: extra)
         end
       end
     end

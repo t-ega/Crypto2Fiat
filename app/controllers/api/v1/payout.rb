@@ -52,7 +52,8 @@ module API
           from_currency = params[:from_currency]
           from_amount = params[:from_amount]
           bank_details = params[:bank_details]
-          sender_email = params[:sender_email]
+
+          sender_email = current_user&.email
 
           status, result =
             Payouts::Creator.new(

@@ -32,7 +32,16 @@ module Market
         end
 
       markup_price = apply_markup(estimated_price)
-      [:ok, markup_price]
+      [
+        :ok,
+        markup_price,
+        extra: {
+          currency_pair: currency_pair,
+          base_amount: result,
+          amount_to_recieve: markup_price,
+          service_charge: PRICE_MARKUP
+        }
+      ]
     end
 
     def apply_markup(price)

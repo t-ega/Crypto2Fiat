@@ -6,17 +6,17 @@ module Transactions
       @transaction_id = transaction_id
     end
 
-    def fetch_details
+    def call
       @transaction = Transaction.find_by(public_id: transaction_id)
       return :error, "Transaction not found" if transaction.blank?
 
       current_state = transaction.aasm.current_state
 
       case current_state
-      when Transaction::STATE_INITIATED
+      when Transaction::STATE_DEPOSIT_INITIATED
         fetch_deposit_status
       when Transaction::STATE_DEPOSIT_CONFIRMED
-        fetch_deposit_status
+        fetch_payout_status
       end
 
       [:ok, transaction]
@@ -27,10 +27,7 @@ module Transactions
         Quidax::Deposits.new.fetch_deposits(transaction.from_currency)
       return :error, result if status != :ok
 
-      # The results from the API are usually ordered by their created At in ASC order
-      # and we need the most recent deposits hence the reverse iteration.
-      # Note: This won't work when the deposists exceed 50. Because that is the default pagination limit.
-      result.reverse_each do |deposit|
+      result.each do |deposit|
         payment_address = deposit["payment_address"]["address"]
         next if payment_address != transaction.payment_address
 
@@ -49,13 +46,20 @@ module Transactions
         return if !in_valid_deposit_range
 
         # Since this desposit is within the transaction
-        # timeline (e.g 20mins), it would be safe to assume that this deposit belongs to that transaction
+        # timeline (e.g 20mins), it would be safe to **assume** that this deposit belongs to that transaction
         if transaction.from_amount == deposit["amount"]
           transaction.confirm_deposit!
+          enque_payout
           transaction.reload
           return
         end
       end
+    end
+
+    def fetch_payout_status
+    end
+
+    def enqueue_payout
     end
   end
 end

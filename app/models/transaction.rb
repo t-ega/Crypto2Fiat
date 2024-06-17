@@ -6,10 +6,18 @@ class Transaction < ApplicationRecord
 
   aasm column: "status" do
     state :initiated, initial: true
-    state :deposit_confirmed, :payout_initiated, :payout_completed, :failed
+    state :deposit_initiated,
+          :deposit_confirmed,
+          :payout_initiated,
+          :payout_completed,
+          :failed
+
+    event :initiate_deposit do
+      transitions from: :initiated, to: :deposit_initiated
+    end
 
     event :confirm_deposit do
-      transitions from: :initiated, to: :deposit_confirmed
+      transitions from: :deposit_initiated, to: :deposit_confirmed
     end
 
     event :initiate_payout do
@@ -21,7 +29,8 @@ class Transaction < ApplicationRecord
     end
 
     event :failed do
-      transitions from: %i[initiated payout_initiated], to: :failed
+      transitions from: %i[initiated deposit_initiated payout_initiated],
+                  to: :failed
     end
   end
 
@@ -32,6 +41,10 @@ class Transaction < ApplicationRecord
   validates :receipient_email, presence: true
   validates :public_id, presence: true
   validates :network, presence: true
+
+  def extract_currency_pair
+    "#{self.from_currency.downcase}#{self.to_currency.downcase}"
+  end
 
   # Nice to have: Send Mail to the receipient after the payout is successful
 end
