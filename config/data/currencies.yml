@@ -1,11 +1,14 @@
 - currency: ethngn
   short_name: ETH
+  display_name: Etherum
   icon: ""
 
 - currency: btcngn
   short_name: BTC
+  display_name: Bitcoin
   icon: ""
 
 - currency: usdtngn
   short_name: USDT
+  display_name: USDT Tether
   icon: ""

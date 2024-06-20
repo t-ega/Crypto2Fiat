@@ -11,7 +11,8 @@ module Quidax
       return :ok, res[:data] if res[:data]
       [:error, res[:error]]
     rescue Faraday::Error => e
-      [:error, e]
+      Rails.logger.error("An error occurred. Error: #{e}")
+      [:error, "An error occurred"]
     end
   end
 end

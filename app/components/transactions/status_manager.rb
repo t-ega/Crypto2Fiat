@@ -8,7 +8,7 @@ module Transactions
 
     def call
       @transaction = Transaction.find_by(public_id: transaction_id)
-      return :error, "Transaction not found" if transaction.blank?
+      return :error, "Transaction not found", 401 if transaction.blank?
 
       current_state = transaction.aasm.current_state
 

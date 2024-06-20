@@ -60,8 +60,9 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "grape"
+gem "grape", ">=2.1"
 gem "factory_bot_rails"
 gem "rubocop", "~> 1.64", require: false
 gem "faraday", "~> 2.7", ">= 2.7.11"
 gem "aasm"
+gem "rack-cors"

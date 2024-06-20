@@ -4,8 +4,8 @@ module API
       namespace :markets do
         desc "Fetch all the supported currencies"
 
-        get :supported_currencies do
-          currencies = Markets::CurrencyLister.call
+        get "currencylist" do
+          currencies = Market::CurrencyLister.call
           render_success(data: currencies)
         end
 

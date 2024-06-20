@@ -24,7 +24,7 @@ module Quidax
     end
 
     def generate_wallet_address(currency)
-      handle_request("users/me/wallets/#{currency}/address", :post)
+      handle_request("users/me/wallets/#{currency}/addresses", :post)
     end
 
     private
@@ -34,7 +34,11 @@ module Quidax
       return :ok, response[:data] if response[:data]
       [:error, response[:error]]
     rescue Faraday::Error => e
-      [:error, e]
+      extra = { url: e.response[:request][:url_path], error: e.message }
+      Rails.logger.error(
+        "An error occurred while fetching data from Quidax API. Error: #{extra}"
+      )
+      [:error, "An error occurred"]
     end
 
     def send_request(url, method)

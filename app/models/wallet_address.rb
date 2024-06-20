@@ -12,7 +12,7 @@ class WalletAddress < ApplicationRecord
 
   def lock_for_deposit!
     # Prevent situations when the wallet was not unlocked after deposit was confrimed or failed
-    if self.in_use && self.last_used_at < MAX_LOCK_TIME.ago
+    if self.in_use && self.last_used_at > MAX_LOCK_TIME.ago
       raise Errors::Payouts::WalletAddressInUseError
     end
 

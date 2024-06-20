@@ -12,7 +12,6 @@ module Kora
       @http_client =
         Faraday.new(url: base_url, headers: headers) do |faraday|
           faraday.response :json
-          faraday.response :raise_error
         end
     end
 
