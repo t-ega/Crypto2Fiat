@@ -63,22 +63,6 @@ module API
           end
         end
 
-        desc "Fetch wallet address to initiate a payout"
-
-        params do
-          requires :currency, values: WalletAddress::ALLOWED_CURRENCIES_LIST
-          optional :network
-        end
-
-        get :wallet_address do
-          currency = params[:currency]
-          _, result = Wallets::Fetcher.new(currency).call
-
-          return render_success(data: result) if result.is_a?(WalletAddress)
-          status 202 # This would tell the server that we have accepted and we are generating the address
-          render_success(message: result)
-        end
-
         desc "Initiate a Payout to the receipient bank"
 
         params do

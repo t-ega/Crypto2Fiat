@@ -1,16 +1,17 @@
 module Kora
   class BaseClient
+    BASE_URL = "https://api.korapay.com".freeze
     attr_reader :http_client
 
     def initialize
       kora_api_key = Rails.application.credentials.kora_api_key
-      base_url = "https://api.korapay.com"
+
       headers = {
         "Content-Type" => "application/json",
         "Authorization" => "Bearer #{kora_api_key}"
       }
       @http_client =
-        Faraday.new(url: base_url, headers: headers) do |faraday|
+        Faraday.new(url: BaseClient::BASE_URL, headers: headers) do |faraday|
           faraday.response :json
         end
     end

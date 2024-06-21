@@ -11,7 +11,7 @@ module Market
     # If no quote type is specified it is assumed the vol is for the base currency (e.g., USDT)
     def initialize(currency_pair:, vol:, quote_type: VOLUME_TO_SEND)
       @currency_pair = currency_pair
-      @vol = vol.to_f
+      @vol = vol.to_d
       @quote_type = quote_type
     end
 
@@ -50,7 +50,8 @@ module Market
 
     def apply_markup(price, fiat: false, reverse: false)
       markup_price =
-        reverse ? price / (1 - PRICE_MARKUP) : price - (price * PRICE_MARKUP)
+        (reverse ? price / (1 - PRICE_MARKUP) : price - (price * PRICE_MARKUP))
+
       return markup_price.round if fiat # We don't send cents
       markup_price.round(6)
     end
