@@ -60,7 +60,5 @@ class Transaction < ApplicationRecord
     self.save!
   end
 
-  belongs_to :wallet_address
-
   # Nice to have: Send Mail to the receipient after the payout is successful
 end

@@ -50,6 +50,11 @@ module Payouts
       [:error, e.message]
     rescue ActiveRecord::RecordInvalid => invalid
       [:error, invalid.record.errors.full_messages]
+    rescue StandardError => e
+      Rails.logger.error(
+        "An error occurred while creating payment. Error: #{e.inspect}"
+      )
+      [:error, "An error occurred while creating payment"]
     end
 
     private
