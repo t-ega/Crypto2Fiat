@@ -44,9 +44,7 @@ module API
           desc "Update the status of the payout"
 
           params do
-            requires :status,
-                     type: Symbol,
-                     values: %i[fail_transaction initiate_deposit]
+            requires :status, type: Symbol, values: %i[cancel initiate_deposit]
           end
 
           post "status" do

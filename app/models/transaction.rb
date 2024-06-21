@@ -6,11 +6,10 @@ class Transaction < ApplicationRecord
 
   aasm column: "status" do
     state :initiated, initial: true
-    state :deposit_initiated, :payout_initiated
+    state :deposit_initiated, :payout_initiated, :cancelled, :failed
 
     state :deposit_confirmed, before_enter: :mark_deposit_as_confirmed
     state :payout_completed, before_enter: :mark_payout_as_completed
-    state :failed
 
     event :initiate_deposit do
       transitions from: :initiated, to: :deposit_initiated
@@ -28,9 +27,12 @@ class Transaction < ApplicationRecord
       transitions from: :payout_initiated, to: :payout_completed
     end
 
+    event :cancel do
+      transitions from: :initiated, to: :cancelled
+    end
+
     event :fail_transaction do
-      transitions from: %i[initiated deposit_initiated payout_initiated],
-                  to: :failed
+      transitions from: %i[deposit_initiated payout_initiated], to: :failed
     end
   end
 
