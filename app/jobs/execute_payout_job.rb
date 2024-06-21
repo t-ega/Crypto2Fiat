@@ -1,5 +1,5 @@
 class ExecutePayoutJob < ApplicationJob
-  def perform(transaction_id)
+  def perform(transaction_id:)
     status, result = Payouts::Executor.new(transaction_id).call
 
     if status != :ok

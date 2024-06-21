@@ -9,8 +9,8 @@ module Kora
         url = "#{Endpoints::TRANSACTION}/#{reference}"
         res = self.get_request(url)
 
-        return :ok, res[:data] if res[:data]
-        [:error, res[:error]]
+        return :error, res if !res[:status]
+        [:ok, res[:data]]
       rescue Faraday::Error => e
         Rails.logger.error("An error occurred. Error: #{e}")
         [:error, "An error occurred"]

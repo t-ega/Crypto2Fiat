@@ -30,8 +30,11 @@ module Kora
         }
 
         res = self.post_request(Endpoints::DISBURE, payload)
-        return :ok, res[:data] if res[:data]
-        [:error, res[:error]]
+
+        if !res[:status]
+          return :error, { data: res[:data], message: res[:message] }
+        end
+        [:ok, res[:data]]
       rescue Faraday::Error => e
         Rails.logger.error("An error occurred. Error: #{e}")
         [:error, "An error occurred"]

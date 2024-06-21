@@ -45,19 +45,22 @@ module Payouts
         Kora::Payouts::SinglePayout.new.call(
           bank_code: "033",
           bank_account: "0000000000",
-          amount: transaction.to_amount,
+          amount: [transaction.to_amount.to_f, 100_000].min, # Test money, should not finish
           reference: transaction.payout_reference,
           receipient_email: transaction.receipient_email
         )
 
       if status != :ok
-        transaction.fail_transaction!
+        transaction.mark_transaction_as_failed(reason: result)
         return :error, result
       end
 
       [:ok, result]
     rescue ActiveRecord::RecordInvalid => invalid
       [:error, invalid.record.errors.full_messages]
+    rescue StandardError => e
+      Rails.logger.error("An unknown error occurred, #{e.inspect}")
+      [:error, "An unknown error occurred"]
     end
 
     def generate_reference

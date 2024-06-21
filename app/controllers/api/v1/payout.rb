@@ -40,6 +40,31 @@ module API
           render_success(data: result)
         end
 
+        route_param :id, type: String do
+          desc "Update the status of the payout"
+
+          params do
+            requires :status,
+                     type: Symbol,
+                     values: %i[fail_transaction initiate_deposit]
+          end
+
+          post "status" do
+            transaction_id = params[:id]
+            status = params[:status]
+
+            status, result =
+              Payouts::Updater.new(
+                transaction_id: transaction_id,
+                status: status
+              ).call
+
+            render_error(errors: result, code: 400) if status != :ok
+            status 200
+            render_success(data: result)
+          end
+        end
+
         desc "Fetch wallet address to initiate a payout"
 
         params do

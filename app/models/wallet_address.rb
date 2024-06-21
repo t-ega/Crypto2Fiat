@@ -7,7 +7,7 @@ class WalletAddress < ApplicationRecord
   scope :currency, ->(currency) { where(currency: currency) }
   scope :not_in_use,
         -> do
-          where("in_use = ? OR last_used_at > ? ", false, MAX_LOCK_TIME.ago)
+          where("in_use = ? OR last_used_at < ? ", false, MAX_LOCK_TIME.ago)
         end
 
   def lock_for_deposit!

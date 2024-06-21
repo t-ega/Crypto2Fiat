@@ -10,7 +10,7 @@ class Transaction < ApplicationRecord
 
     state :deposit_confirmed, before_enter: :mark_deposit_as_confirmed
     state :payout_completed, before_enter: :mark_payout_as_completed
-    state :failed, before_enter: :mark_payout_as_failed
+    state :failed
 
     event :initiate_deposit do
       transitions from: :initiated, to: :deposit_initiated
@@ -54,9 +54,13 @@ class Transaction < ApplicationRecord
     self.payout_confirmed_at = Time.current
   end
 
-  def mark_payout_as_failed
+  def mark_transaction_as_failed(reason:)
+    self.failure_reason = reason
     self.failed_at = Time.current
+    self.save!
   end
+
+  belongs_to :wallet_address
 
   # Nice to have: Send Mail to the receipient after the payout is successful
 end

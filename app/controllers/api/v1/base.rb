@@ -54,7 +54,6 @@ module API
       mount Auth
       mount Markets
       mount Payout
-      mount Payment
     end
   end
 end

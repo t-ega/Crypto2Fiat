@@ -34,7 +34,11 @@ module Quidax
       return :ok, response[:data] if response[:data]
       [:error, response[:error]]
     rescue Faraday::Error => e
-      extra = { url: e.response[:request][:url_path], error: e.message }
+      extra = {
+        url: e.response[:request][:url_path],
+        body: e.response[:request][:body],
+        message: e.message
+      }
       Rails.logger.error(
         "An error occurred while fetching data from Quidax API. Error: #{extra}"
       )

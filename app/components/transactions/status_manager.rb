@@ -69,26 +69,32 @@ module Transactions
 
       status, result =
         Kora::Payouts::VerifyPayout.new.call(transaction.payout_reference)
+      puts "REss: #{result}"
 
       if status != :ok
         Rails.logger.error(
-          "Unable to verify payout status for #{transaction.public_id}. Failed with #{result}"
+          "Unable to verify payout status for #{transaction.public_id}. Failed with #{result.inspect}"
         )
         return
       end
 
+      wallet_address =
+        WalletAddress.find_by(address: transaction.payment_address)
+
       case result["status"]
       when "success"
         transaction.confirm_payout!
+        wallet_address.unlock_for_deposit!
       when "failed"
-        transaction.fail_transaction!
+        transaction.mark_transaction_as_failed(reason: result)
+        wallet_address.unlock_for_deposit!
       end
 
       transaction.reload
     end
 
     def enqueue_payout
-      ExecutePayoutJob.perform_later(transaction.public_id)
+      ExecutePayoutJob.perform_later(transaction_id: transaction.public_id)
     end
   end
 end
