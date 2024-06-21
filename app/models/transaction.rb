@@ -38,7 +38,7 @@ class Transaction < ApplicationRecord
 
   validates :payment_address, presence: true
   validates :account_details, presence: true
-  validates :from_amount, presence: true
+  validates :from_amount, presence: true, numericality: { greater_than: 0 }
   validates :to_currency, presence: true
   validates :receipient_email, presence: true
   validates :public_id, presence: true

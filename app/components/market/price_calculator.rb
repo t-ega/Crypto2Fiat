@@ -53,7 +53,7 @@ module Market
         (reverse ? price / (1 - PRICE_MARKUP) : price - (price * PRICE_MARKUP))
 
       return markup_price.round if fiat # We don't send cents
-      markup_price.round(6)
+      markup_price.round(5)
     end
 
     def estimate_price_to_receive(currency_price)

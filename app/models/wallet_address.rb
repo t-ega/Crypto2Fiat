@@ -10,6 +10,7 @@ class WalletAddress < ApplicationRecord
           where("in_use = ? OR last_used_at < ? ", false, MAX_LOCK_TIME.ago)
         end
 
+  # Cope with race conditions
   def lock_for_deposit!
     # Prevent situations when the wallet was not unlocked after deposit was confrimed or failed
     if self.in_use && self.last_used_at > MAX_LOCK_TIME.ago

@@ -41,7 +41,7 @@ module Payouts
             to_currency: "ngn",
             public_id: generate_public_id,
             payment_address: wallet.address,
-            network: "bep20"
+            network: "bep20" # All wallet addresses are on bep20
           )
       end
 
