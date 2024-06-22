@@ -49,12 +49,12 @@ module API
 
           post "status" do
             transaction_id = params[:id]
-            status = params[:status]
+            event = params[:status]
 
             status, result =
               Payouts::Updater.new(
                 transaction_id: transaction_id,
-                status: status
+                event: event
               ).call
 
             render_error(errors: result, code: 400) if status != :ok
