@@ -59,7 +59,7 @@ class Transaction < ApplicationRecord
   def mark_transaction_as_failed(reason:)
     self.failure_reason = reason
     self.failed_at = Time.current
-    self.save!
+    self.fail_transaction!
   end
 
   # Nice to have: Send Mail to the receipient after the payout is successful

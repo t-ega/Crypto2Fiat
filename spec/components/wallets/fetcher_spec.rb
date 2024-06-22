@@ -16,7 +16,7 @@ RSpec.describe Wallets::Fetcher do
       expect(result.address).to eq(wallet_not_in_use.address)
     end
 
-    it "should fetch the wallet address if the wallet address is not present" do
+    it "should fetch the wallet address if the a wallet is found but the wallet address is not present" do
       fetched_address = "fetched_address"
       mock_response = { address: fetched_address }
 
@@ -40,7 +40,7 @@ RSpec.describe Wallets::Fetcher do
       expect(result.address).to eq(fetched_address)
     end
 
-    it "should generate a new wallet address if no wallet address is found" do
+    it "should generate a new wallet address if no wallet address was found" do
       wallet_currency = "eth"
       wallet = create(:wallet_address, currency: wallet_currency)
 
