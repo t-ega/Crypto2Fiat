@@ -24,7 +24,9 @@ module Quidax
     end
 
     def generate_wallet_address(currency)
-      handle_request("users/me/wallets/#{currency}/addresses", :post)
+      # handle_request("users/me/wallets/#{currency}/addresses", :post)
+      puts "Callesd"
+      [:ok, true]
     end
 
     private
