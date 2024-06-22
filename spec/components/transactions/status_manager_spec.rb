@@ -236,7 +236,6 @@ RSpec.describe Transactions::StatusManager do
             Transactions::StatusManager.new(transaction.public_id).call
           expect(status).to eq(:ok)
           expect(result.public_id).to eq(transaction.public_id)
-          puts "res, #{result.inspect}"
           transaction.reload
         }.to change { transaction.status }.from("payout_initiated").to("failed")
       end
