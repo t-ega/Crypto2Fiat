@@ -13,9 +13,8 @@ class CreateWalletAddressJob < ApplicationJob
       return
     end
 
-    address = res[:data]
     wallet_address =
-      WalletAddress.create(address_id: address[:id], currency: currency)
+      WalletAddress.create(address_id: res[:id], currency: currency)
 
     if !wallet_address.valid?
       Rails.logger.error(
