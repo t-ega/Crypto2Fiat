@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :wallet_address do
     address { "address" }
-    network { "network" }
+    network { "bep20" }
     address_id { "address_id" }
-    currency { "currency" }
+    currency { "eth" }
   end
 end
