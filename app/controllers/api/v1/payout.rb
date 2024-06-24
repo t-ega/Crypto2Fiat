@@ -1,6 +1,15 @@
 module API
   module V1
     class Payout < Grape::API
+      helpers do
+        def current_user
+          return nil if headers["authorization"].nil?
+
+          @current_user ||=
+            AuthenticationToken.find_user_from_token(headers["authorization"])
+        end
+      end
+
       namespace :payouts do
         desc "Get details of all the supported banks"
 
@@ -85,7 +94,6 @@ module API
           from_currency = params[:from_currency]
           from_amount = params[:from_amount]
           bank_details = params[:bank_details]
-
           sender_email = current_user&.email
 
           status, result =

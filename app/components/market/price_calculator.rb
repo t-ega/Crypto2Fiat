@@ -19,10 +19,10 @@ module Market
       status, result = Market::Ticker.new(currency_pair).call
       return :error, result if status != :ok
 
-      status, markup_price =
+      status, estimate, markup_price =
         if quote_type == VOLUME_TO_RECIEVE
           estimate = estimate_price_to_send(result)
-          [:ok, apply_markup(estimate, reverse: true)] # Remove markup for reverse calculation
+          [:ok, estimate, apply_markup(estimate, reverse: true)] # Remove markup for reverse calculation
         else
           estimate = estimate_price_to_receive(result)
           markup = apply_markup(estimate, fiat: true)
@@ -31,7 +31,7 @@ module Market
             return :error, "Amount to receive is too small"
           end
 
-          [:ok, markup]
+          [:ok, estimate, markup]
         end
 
       return :error, markup_price if status != :ok
@@ -43,9 +43,19 @@ module Market
           currency_pair: currency_pair,
           market_price: result,
           amount_to_receive: markup_price,
-          service_charge: PRICE_MARKUP
+          service_charge: PRICE_MARKUP,
+          fee: estimate * PRICE_MARKUP
         }
       ]
+    end
+
+    def self.usdt_equivalent(currency:, vol:)
+      currency_pair = "#{currency}usdt"
+      status, result = Market::Ticker.new(currency_pair).call
+      return :error, result if status != :ok
+
+      equivalent = (result * vol)
+      [:ok, equivalent]
     end
 
     def apply_markup(price, fiat: false, reverse: false)

@@ -1,4 +1,6 @@
 module Payouts
+  FREE_TIER_MAX_USDT_VOL = 10.freeze
+
   class Creator
     attr_reader :account_details,
                 :wallet_address_id,
@@ -24,6 +26,26 @@ module Payouts
     end
 
     def call
+      # check if the user is authenticated to perform greater than 10 dollars
+      user = User.find_by_email(sender_email)
+
+      if !user
+        status, result =
+          Market::PriceCalculator.usdt_equivalent(
+            currency: from_currency,
+            vol: from_amount
+          )
+
+        return :error, result if status != :ok
+
+        if result > Payouts::FREE_TIER_MAX_USDT_VOL
+          return [
+            :error,
+            "Unable to process amount. You need to be logged in to process this amount"
+          ]
+        end
+      end
+
       status, wallet = Wallets::Fetcher.new(from_currency).call
       return :error, wallet if status != :ok
 
@@ -51,6 +73,7 @@ module Payouts
     rescue ActiveRecord::RecordInvalid => invalid
       [:error, invalid.record.errors.full_messages]
     rescue StandardError => e
+      puts "Heyyyyy #{e.inspect}"
       Rails.logger.error(
         "An error occurred while creating payment. Error: #{e.inspect}"
       )
