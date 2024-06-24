@@ -47,7 +47,6 @@ module Payouts
       end
 
       status, wallet = Wallets::Fetcher.new(from_currency).call
-      puts "Passed here, #{result}"
       return :error, wallet if status != :ok
 
       wallet.with_lock do
