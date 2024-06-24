@@ -54,7 +54,7 @@ module API
       mount Auth
       mount Markets
       mount Payout
-      mount Transactions
+      mount TransactionsController
     end
   end
 end
