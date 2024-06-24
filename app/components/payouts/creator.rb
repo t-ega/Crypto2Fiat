@@ -47,6 +47,7 @@ module Payouts
       end
 
       status, wallet = Wallets::Fetcher.new(from_currency).call
+      puts "Passed here, #{result}"
       return :error, wallet if status != :ok
 
       wallet.with_lock do
@@ -73,7 +74,6 @@ module Payouts
     rescue ActiveRecord::RecordInvalid => invalid
       [:error, invalid.record.errors.full_messages]
     rescue StandardError => e
-      puts "Heyyyyy #{e.inspect}"
       Rails.logger.error(
         "An error occurred while creating payment. Error: #{e.inspect}"
       )

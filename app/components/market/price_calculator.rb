@@ -43,13 +43,14 @@ module Market
           currency_pair: currency_pair,
           market_price: result,
           amount_to_receive: markup_price,
-          service_charge: PRICE_MARKUP,
-          fee: estimate * PRICE_MARKUP
+          service_charge: (estimate * PRICE_MARKUP).round
         }
       ]
     end
 
     def self.usdt_equivalent(currency:, vol:)
+      return :ok, vol if currency == "usdt"
+
       currency_pair = "#{currency}usdt"
       status, result = Market::Ticker.new(currency_pair).call
       return :error, result if status != :ok
