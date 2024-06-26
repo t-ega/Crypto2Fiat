@@ -2,7 +2,7 @@ desc "Fetch and populate internal wallet addresses from Quidax API"
 
 namespace :quidax do
   task populate_wallet_addresses: :environment do
-    allowed_currencies = Market::CurrencyLister.new.call
+    allowed_currencies = Market::CurrencyLister.call
     task_name = "populate_wallet_addresses"
 
     puts "Started task #{task_name} at #{Time.current}"

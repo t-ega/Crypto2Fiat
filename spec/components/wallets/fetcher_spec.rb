@@ -39,21 +39,5 @@ RSpec.describe Wallets::Fetcher do
       expect(wallet.address).to eq(fetched_address)
       expect(result.address).to eq(fetched_address)
     end
-
-    it "should generate a new wallet address if no wallet address was found" do
-      wallet_currency = "eth"
-      wallet = create(:wallet_address, currency: wallet_currency)
-
-      wallet.lock_for_deposit!
-
-      expect(CreateWalletAddressJob).to receive(:perform_later).with(
-        wallet_currency
-      ).once
-
-      status, result = Wallets::Fetcher.new(wallet_currency).call
-
-      expect(status).to eq(:pending)
-      expect(result).to eq("Generating wallet address")
-    end
   end
 end

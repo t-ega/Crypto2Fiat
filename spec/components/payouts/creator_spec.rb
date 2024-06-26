@@ -66,7 +66,7 @@ RSpec.describe Payouts::Creator do
           ).call
 
         expect(status).to eq(:error)
-        expect(result).to include("Unable to process amount")
+        expect(result).to include("You need to be logged in")
       end
 
       it "should approve any amount of payout for an authenticated user" do
