@@ -19,8 +19,8 @@ module Wallets
       return :ok, wallet_address if wallet_address
 
       # Generate a new one
-      CreateWalletAddressJob.perform_later(currency)
-      [:pending, "Generating wallet address"]
+      # CreateWalletAddressJob.perform_later(currency)
+      [:pending, "Please try again in the next 10 minutes"]
     end
 
     private

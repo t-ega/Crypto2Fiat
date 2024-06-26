@@ -41,7 +41,7 @@ module Payouts
         if result > Payouts::FREE_TIER_MAX_USDT_VOL
           return [
             :error,
-            "Unable to process amount. You need to be logged in to process this amount"
+            "Max amount is #{Payouts::FREE_TIER_MAX_USDT_VOL}USDT. You need to be logged in to process this amount"
           ]
         end
       end
