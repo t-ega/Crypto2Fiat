@@ -22,4 +22,4 @@ test:
 
 production:
   <<: *default
-  database: offramp_production
+  url: <%= ENV["DATABASE_URL"] %>
